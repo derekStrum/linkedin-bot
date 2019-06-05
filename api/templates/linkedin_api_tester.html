@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Linkedin API test</title>
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github-gist.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>API tester</h1>
+        <p id="state"></p>
+
+        <div class="container">
+            <div class="columns">
+                <div class="column col-3">
+                    <form action="/">
+                        <p>Leave values as is, to test with defaut user/password</p>
+                        <!-- normal input group with button -->
+                        <div class="form-group">
+                            <label for="apikey">x-api-key</label>
+                            <input name="apikey" id="apikey" class="form-input" type="password" value="" required autocomplete>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">Test: </span>
+                            <label>
+                                <select id="url" name="url" class="form-select"  required>
+                                    <option value="/whoami">/whoami</option>
+                                    <option value="/send_invites">/send_invites</option>
+                                </select>
+                            </label>
+                            <button class="btn btn-primary input-group-btn" type="submit">Submit</button>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input name="username" id="username" class="form-input" type="text" value="libelaft@aol.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input name="password" id="password" class="form-input" type="password" value="diDZ3y1hT" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="proxy">Proxy</label>
+                            <input name="proxy" id="proxy" class="form-input" type="text" value="142.44.223.144:80:phebwcby-1000:v48kq59u7snm" required autocomplete>
+                        </div>
+                        <div class="form-group">
+                            <label for="keywords">Keywords</label>
+                            <input name="keywords" id="keywords" class="form-input" type="text" value="dev" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="max_results">Max Results</label>
+                            <input name="max_results" id="max_results" class="form-input" type="text" value="2" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="column col-9">
+                    <pre><code class="javascript" id="result"></code></pre>
+
+                    <div class="form-group">
+                        <pre><code class="javascript">
+// First we get task_id
+$.ajax({
+    url: params.url, // param above
+    type: 'POST',
+    data: params,
+    // WARNING request.setRequestHeader is not recommended to use on client! WARNING
+    beforeSend: function(request) {
+        request.setRequestHeader("x-api-key", params.apikey);
+    },
+    success: function(data){
+        if(data.hasOwnProperty('task_id')) {
+            task_id = data['task_id'];
+
+            // Next we loop until receive some known results
+            (function getData(){
+                $.ajax({
+                    url: '/logs',
+                    type: 'POST',
+                    data: {
+                        task_id: task_id
+                    },
+                    // WARNING request.setRequestHeader is not recommended to use on client! WARNING
+                    beforeSend: function(request) {
+                        request.setRequestHeader("x-api-key", params.apikey);
+                    },
+                    success: function(data){
+                        setTimeout(function () {
+                            if(data.hasOwnProperty('state')) {
+                                if (data['state'] === 'running'){
+                                    getData();
+                                }
+                                else if (data['state'] === 'success'){
+                                    $('#result').html(JSON.stringify(data, undefined, 2));
+                                }
+                                else if (data['state'] === 'failure' || data['state'] === 'unknow'){
+                                    alert('Task was finished, but with error or Task was deleted or not exist')
+                                }
+                            }
+                            else{
+                                console.log('Failed to get response...');
+                            }
+                        }, 5000)
+                    },
+                    error: function () {
+                        setTimeout(function () {
+                            getData();
+                        }, 5000)
+                    },
+                    timeout: 30000
+                });
+            })();
+        }
+        else{
+            alert('Failed to get job_id!')
+        }
+    },
+    error: function () {
+        alert('Failed to get job_id!')
+    },
+    timeout: 30000
+});
+                          </code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js"
+            integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/javascript.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script>
+
+
+        $(document).ready(function () {
+            function createCookie(name, value, date){
+                var c = name + '=' + value + "; expires=" + date;
+                document.cookie = c;
+            }
+
+            function getCookie(name) {
+                var value = "; " + document.cookie;
+                var parts = value.split("; " + name + "=");
+                if (parts.length == 2) return parts.pop().split(";").shift();
+            }
+
+            var api_key = getCookie('apikey');
+            if (api_key){
+                $('input[name=apikey]').val(api_key);
+            }
+
+            $('form').submit( function (e) {
+               var date = new Date();
+               date.setTime(date.getTime()+(1000*24*60*60*1000));
+               createCookie('apikey', $('input[name=apikey]').val(), date);
+
+               e.preventDefault();
+               var params = {};
+
+               $.each($( this ).serializeArray(), function() {
+                    params[this.name] = this.value;
+               });
+
+               // First we get task_id
+               $.ajax({
+                    url: params.url, // param above
+                    type: 'POST',
+                    data: params,
+                    // WARNING request.setRequestHeader is not recommended to use on client! WARNING
+                    beforeSend: function(request) {
+                        request.setRequestHeader("x-api-key", params.apikey);
+                    },
+                    success: function(data){
+                        if(data.hasOwnProperty('task_id')) {
+                            task_id = data['task_id'];
+                            $('#state').append('<p>' + data['task_id'] + '</p>');
+
+                            // Next we loop until recive some known results
+                            (function getData(){
+                                $.ajax({
+                                    url: '/logs',
+                                    type: 'POST',
+                                    data: {
+                                        task_id: task_id
+                                    },
+                                    // WARNING request.setRequestHeader is not recommended to use on client! WARNING
+                                    beforeSend: function(request) {
+                                        request.setRequestHeader("x-api-key", params.apikey);
+                                    },
+                                    success: function(data){
+                                        if(data.hasOwnProperty('state')) {
+                                            $('#state').append('<p>' + data['state'] + '</p>');
+
+                                            if (data['state'] === 'running'){
+                                                setTimeout(function () {
+                                                    getData();
+                                                }, 5000)
+                                            }
+                                            else if (data['state'] === 'success'){
+                                                $('#result').html(JSON.stringify(data, undefined, 2));
+                                            }
+                                            else if (data['state'] === 'failure' || data['state'] === 'unknow'){
+                                                alert('Task was finished, but with error or Task was deleted or not exist')
+                                            }
+                                        }
+                                        else{
+                                            console.log('Failed to get response...');
+                                        }
+                                    },
+                                    error: function () {
+                                        setTimeout(function () {
+                                            getData();
+                                        }, 5000)
+                                    },
+                                    timeout: 30000
+                                });
+                            })();
+                        }
+                        else{
+                            alert('Failed to get job_id!')
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to get job_id!')
+                    },
+                    timeout: 30000
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+https://medium.com/ymedialabs-innovation/deploy-flask-app-with-nginx-using-gunicorn-and-supervisor-d7a93aa07c18
+https://thepracticalsysadmin.com/quicktip-manage-memory-usage-with-supervisord/
+https://ruhighload.com/%D0%97%D0%B0%D0%BF%D1%83%D1%81%D0%BA+%D0%BF%D1%80%D0%BE%D1%86%D0%B5%D1%81%D1%81%D0%BE%D0%B2+%D0%B2+supervisor
+
+update tests
+test puppter and proxy
+
+need update library-schema.sql (tasks)
+
+add warning about cleaning...
+
+need update /db_clean (safe log clean)
+clean DB cron task (if it needed).
+
+no LOG into DB
+filehandler logs
+
+
+test delete_user
+
+
+-------------------
+clean stuff
+rewrite clean
+testapi readme

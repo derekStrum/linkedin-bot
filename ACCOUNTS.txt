@@ -1,0 +1,21 @@
+Linkedin accounts, login:pass
+
+libelaft@aol.com:diDZ3y1hT
+quytch@aol.com:wVG5Ztjc7
+exactnass@aol.com:GBk7ypN4b
+destinyperez94@aol.com:cG9A2rjOv
+dectdir@aol.com:RD5vsAda2
+
+Proxies ip:port:user:pass
+alternative format is just ip:port
+
+138.128.19.56:9583:tKHzyq:gaNfx9
+138.128.19.56:9583:tKHzyq:gaNfx9
+138.59.207.6:9107:B9BL3G:6o04B4
+
+186.65.115.54:9562:kwaxUa:weMwvA
+81.4.108.157:38675:5SZEjK:DvKWTY
+
+193.22.99.11:23639:gEz3ve:PGqpzc
+193.22.99.11:23638:gEz3ve:PGqpzc
+193.22.99.11:23637:gEz3ve:PGqpzc
